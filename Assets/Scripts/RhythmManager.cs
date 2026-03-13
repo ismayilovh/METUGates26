@@ -61,13 +61,6 @@ public class RhythmManager : MonoBehaviour
             return;
         }
 
-        if (beatPointPrefab == null)
-        {
-            Debug.LogError("RhythmManager: beatPointPrefab is not assigned.");
-            enabled = false;
-            return;
-        }
-
         if (poolStartPosition == null)
         {
             Debug.LogError("RhythmManager: poolStartPosition is not assigned.");
@@ -204,7 +197,10 @@ public class RhythmManager : MonoBehaviour
             if (!beatData.inputHandled)
             {
                 failureCount++;
-                Debug.Log($"Beat {beatIndex} FAILED - Input not detected in time window.");
+
+                Debug.Log($"Beat {beatIndex} MISS - No input");
+
+                healthSystem.MissedTarget();
             }
             activeBeatData.Remove(beatIndex);
         }
@@ -323,33 +319,53 @@ public class RhythmManager : MonoBehaviour
 
             if (closestMissBeatIndex >= 0)
             {
-                // Mark this beat as handled with Miss feedback
                 failureCount++;
+
                 var beatData = activeBeatData[closestMissBeatIndex];
                 activeBeatData[closestMissBeatIndex] = (beatData.beatTime, true);
 
                 bool isLate = inputTime >= beatData.beatTime;
                 string missReason = isLate ? "Late press" : "Input too far from beat";
-                Debug.Log($"Beat {closestMissBeatIndex} MISS - {missReason}. Success: {successCount}, Failed: {failureCount}");
+
+                Debug.Log($"Beat {closestMissBeatIndex} MISS - {missReason}");
+
+                healthSystem.MissedTarget();
             }
         }
     }
-
+    public ObjectsMove objectsMove;
+    public HealthSystem healthSystem;
+    public PerfectVFX perfectVfx;
     private BeatFeedback GetFeedback(float errorPercentage, bool isEarly)
     {
-        // Only accept early presses; late presses return Miss
+        // Late presses are always miss
         if (!isEarly)
+        {
+            Debug.Log("MISS - Late press");
+            healthSystem.MissedTarget();
             return BeatFeedback.Miss;
-
+        }
+        objectsMove.MoveTrail(2f, 0.2f);
         if (errorPercentage <= perfectThreshold)
+        {
+            perfectVfx.PlayPerfect();
             return BeatFeedback.Perfect;
+        }
         else if (errorPercentage <= greatThreshold)
+        {
             return BeatFeedback.Great;
+        }
         else if (errorPercentage <= goodThreshold)
+        {
             return BeatFeedback.Good;
+        }
         else if (errorPercentage <= inputTolerancePercent)
+        {
             return BeatFeedback.Early;
+        }
 
+        Debug.Log("MISS - Too inaccurate");
+        healthSystem.MissedTarget();
         return BeatFeedback.Miss;
     }
 }

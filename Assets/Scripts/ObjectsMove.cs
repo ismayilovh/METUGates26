@@ -6,9 +6,6 @@ public class ObjectsMove : MonoBehaviour
     GameObject[] objects;
     Vector3[] startingPositions;
 
-    public float moveDistance = 2f;
-    public float moveDuration = 0.2f;
-
     void Start()
     {
         objects = GameObject.FindGameObjectsWithTag("moveobject");
@@ -19,10 +16,10 @@ public class ObjectsMove : MonoBehaviour
         {
             startingPositions[i] = objects[i].transform.position;
         }
-        MoveTrail();
+        
     }
 
-    public void MoveTrail()
+    public void MoveTrail(float moveDistance, float moveDuration)
     {
         Sequence seq = DOTween.Sequence();
 
