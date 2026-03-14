@@ -20,6 +20,10 @@ public class PerfectVFX : MonoBehaviour
 
     public float spotScaleAmount = 1.1f;
     public static int score = 0;
+
+    public Animator armAnimator;
+    public AnimationClip armAnim;
+    public ParticleSystem secondVFX;
     private void Start()
     {
         score = 0;
@@ -27,6 +31,7 @@ public class PerfectVFX : MonoBehaviour
 
     void PlayEffect(Transform text, Transform image, float multiplier, float duration, bool playParticles)
     {
+        armAnimator.Play("ArmAnim", 0, 0f);
         // Ring
         ring.DOKill();
 
@@ -53,11 +58,12 @@ public class PerfectVFX : MonoBehaviour
         if (playParticles)
             particles.Play();
 
-        Camera.main.transform.DOShakePosition(0.1f * multiplier, 0.12f);
+        Camera.main.transform.DOShakePosition(0.62f * multiplier, 0.14f);
     }
 
     public void PlayPerfect()
     {
+        secondVFX.Play();
         score += 100;
         PlayEffect(perfectText, perfectImage, 1f, 0.20f, true);
     }

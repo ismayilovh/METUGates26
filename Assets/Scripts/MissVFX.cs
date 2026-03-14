@@ -43,7 +43,7 @@ public class MissVFX : MonoBehaviour
         imgSeq.Append(missImage.DOScale(0f, 0.18f).SetEase(Ease.InQuad));
 
         // Particle
-        // missParticles.Play();
+         missParticles.Play();
 
         // küçük kamera shake
         Camera.main.transform.DOShakePosition(0.08f, 0.08f);

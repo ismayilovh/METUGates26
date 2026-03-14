@@ -60,7 +60,7 @@ public class StoryCards : MonoBehaviour
 
         if (currentStep >= steps.Length)
         {
-            SceneManager.LoadScene("EmreScene3");
+            SceneManager.LoadScene("EmreScene4");
             return;
         }
 

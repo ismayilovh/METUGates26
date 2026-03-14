@@ -16,7 +16,8 @@ public class WinController : MonoBehaviour
 
     int score;
     int highscore;
-
+    public Animator cashierAnimator;
+    public AnimationClip cashierAnimation;
     void Start()
     {
         panel.localScale = Vector3.zero;

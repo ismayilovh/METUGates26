@@ -12,8 +12,8 @@ EditorBuildSettings:
     path: Assets/Scenes/StoryScene.unity
     guid: e4f13181eb373fc4594d16f29d69c4f4
   - enabled: 1
-    path: Assets/Scenes/EmreScene3.unity
-    guid: cfde40c74d6236b4fadd64e4b4394b25
+    path: Assets/Scenes/EmreScene4.unity
+    guid: 3a34f746063a198408df90abc3d64185
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
