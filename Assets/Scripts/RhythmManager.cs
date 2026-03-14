@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -33,6 +33,7 @@ public class RhythmManager : MonoBehaviour
     public float moveStartTime = 2f;
     public float holdTime = 0.05f;
     public float exitDuration = 0.4f;
+    public float beatOffset = 0;
 
     [Header("Input Tolerance")]
     public float inputTolerancePercent = 20f;
@@ -71,7 +72,15 @@ public class RhythmManager : MonoBehaviour
         pressAction = inputActions.FindAction("Press");
         pressAction.Enable();
 
+        StartCoroutine(InitializeGame());
+    }
+
+    IEnumerator InitializeGame()
+    {
+        yield return new WaitForSeconds(3f);
+
         startTime = Time.time;
+        AudioManager.Instance.StartRhythm();
 
         StartCoroutine(SpawnBeats());
         StartCoroutine(UpdateBeats());
@@ -82,8 +91,8 @@ public class RhythmManager : MonoBehaviour
     {
         while (beatIndex < config.beats.Count)
         {
-            float beatTime = config.beats[beatIndex];
-            float elapsed = Time.time - startTime;
+            float beatTime = config.beats[beatIndex] + beatOffset;
+            float elapsed = AudioManager.Instance.GetTime();
             float remaining = beatTime - elapsed;
 
             if (remaining <= moveStartTime + 0.5f)
@@ -92,7 +101,7 @@ public class RhythmManager : MonoBehaviour
 
                 if (Random.value < maliciousChance && beatIndex + 1 < config.beats.Count)
                 {
-                    float nextBeat = config.beats[beatIndex + 1];
+                    float nextBeat = config.beats[beatIndex + 1] + beatOffset;
                     float maliciousTime = (beatTime + nextBeat) * 0.5f;
 
                     SpawnBeat(beatIndex + 10000, maliciousTime, true);
@@ -202,29 +211,38 @@ public class RhythmManager : MonoBehaviour
         int closest = -1;
         float closestDist = float.MaxValue;
 
+        int nearestUpcoming = -1;
+        float nearestUpcomingDist = float.MaxValue;
+
         foreach (var kvp in activeBeats)
         {
             BeatData data = kvp.Value;
 
-            if (data.handled)
-                continue;
+            if (data.handled) continue;
 
             float dist = Mathf.Abs(inputTime - data.beatTime);
             bool early = inputTime < data.beatTime;
 
-            float tolerance = Mathf.Max(data.beatTime * (inputTolerancePercent / 100f), 0.1f);
+            float tolerance = moveStartTime * (inputTolerancePercent / 100f);
 
-            if (early && dist <= tolerance && dist < closestDist)
+            bool withinWindow = (early && dist <= tolerance) || (!early && dist <= holdTime);
+
+            if (withinWindow && dist < closestDist)
             {
                 closest = kvp.Key;
                 closestDist = dist;
+            }
+
+            if (early && dist < nearestUpcomingDist)
+            {
+                nearestUpcoming = kvp.Key;
+                nearestUpcomingDist = dist;
             }
         }
 
         if (closest >= 0)
         {
             BeatData data = activeBeats[closest];
-
             data.handled = true;
 
             if (data.malicious)
@@ -236,32 +254,38 @@ public class RhythmManager : MonoBehaviour
 
             successCount++;
 
-            float errorPercent = (closestDist / data.beatTime) * 100f;
-
+            float errorPercent = (closestDist / moveStartTime) * 100f;
             BeatFeedback feedback = GetFeedback(errorPercent);
-
             Debug.Log("Beat " + closest + " " + feedback);
+        }
+        else
+        {
+            if (nearestUpcoming >= 0)
+                activeBeats[nearestUpcoming].handled = true;
+
+            failureCount++;
+            GetFeedback(float.MaxValue); // ✅ Only GetFeedback takes the heart now
+            Debug.Log("Miss — pressed too early");
         }
     }
 
     BeatFeedback GetFeedback(float error)
     {
-        objectsMove.MoveTrail(2f, 0.2f);
-
         if (error <= perfectThreshold)
         {
+            objectsMove.MoveTrail(2f, 0.2f);
             perfectVfx.PlayPerfect();
             return BeatFeedback.Perfect;
         }
-
         if (error <= greatThreshold)
         {
+            objectsMove.MoveTrail(2f, 0.2f);
             perfectVfx.PlayGreat();
             return BeatFeedback.Great;
         }
-
         if (error <= goodThreshold)
         {
+            objectsMove.MoveTrail(2f, 0.2f);
             perfectVfx.PlayGood();
             return BeatFeedback.Good;
         }

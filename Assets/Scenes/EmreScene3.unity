@@ -7219,6 +7219,51 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &675283755
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 675283757}
+  - component: {fileID: 675283756}
+  m_Layer: 0
+  m_Name: Audio Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &675283756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 675283755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1bcbc28dd9e2af47be162dc2696d430, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  musicSource: {fileID: 1741565435}
+--- !u!4 &675283757
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 675283755}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.44458, y: 0.2247, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &682346247
 GameObject:
   m_ObjectHideFlags: 0
@@ -9554,7 +9599,7 @@ MonoBehaviour:
   maliciousBeatPrefab: {fileID: 6634489746980102651, guid: 87995b7c778a75b449fbd35854b924bb, type: 3}
   poolStart: {fileID: 385035638}
   poolEnd: {fileID: 1516441565}
-  config: {fileID: 11400000, guid: 0d0f6d55afb0d624897b7e384c2d624b, type: 2}
+  config: {fileID: 11400000, guid: b66008ed0b63b2244a27de775a94cd7b, type: 2}
   inputActions: {fileID: -944628639613478452, guid: 08fa6bfeb034c8c4d801717440c8ec81, type: 3}
   objectsMove: {fileID: 1795754503}
   healthSystem: {fileID: 617256197}
@@ -9749,7 +9794,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: b37caa0440d85794b99951e40d7c615b, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -11043,3 +11088,4 @@ SceneRoots:
   - {fileID: 326159883}
   - {fileID: 157134908}
   - {fileID: 1741565436}
+  - {fileID: 675283757}
