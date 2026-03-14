@@ -15,10 +15,15 @@ public class RhythmManager : MonoBehaviour
 {
     [SerializeField] private GameObject mainPoint;
     [SerializeField] private GameObject beatPointPrefab;
+    [SerializeField] private GameObject maliciousBeatPrefab;
     [SerializeField] private Transform poolStartPosition;
     [SerializeField] private Transform poolEndPosition;
+    [SerializeField] private Transform missPosition;
     [SerializeField] private RhythmConfig config;
     [SerializeField] private InputActionAsset inputActions;
+
+    [Tooltip("Chance (0-1) of spawning a malicious beat between regular beats")] [SerializeField]
+    private float maliciousBeatChance = 0.1f;
 
     [Tooltip("How long the object stays centered on the main point before returning")] [SerializeField]
     private float holdTime = 0.05f;
@@ -44,12 +49,15 @@ public class RhythmManager : MonoBehaviour
 
     // internal
     private Queue<GameObject> availablePool = new Queue<GameObject>();
-    private Dictionary<int, (float beatTime, bool inputHandled)> activeBeatData = new Dictionary<int, (float, bool)>();
+    private Queue<GameObject> maliciousPool = new Queue<GameObject>();
+    private Dictionary<int, (float beatTime, bool inputHandled, bool isMalicious)> activeBeatData = new Dictionary<int, (float, bool, bool)>();
+    private Dictionary<int, GameObject> activeBeatObjects = new Dictionary<int, GameObject>();
     private float startTime;
     private int beatIndex = 0;
     private int successCount = 0;
     private int failureCount = 0;
     private InputAction pressAction;
+    private float moveStartThreshold = 2f; // Beats start moving 2 seconds before their beat time
 
     private void Start()
     {
@@ -70,6 +78,20 @@ public class RhythmManager : MonoBehaviour
         if (poolEndPosition == null)
         {
             Debug.LogError("RhythmManager: poolEndPosition is not assigned.");
+            enabled = false;
+            return;
+        }
+
+        if (beatPointPrefab == null)
+        {
+            Debug.LogError("RhythmManager: beatPointPrefab is not assigned.");
+            enabled = false;
+            return;
+        }
+
+        if (maliciousBeatPrefab == null)
+        {
+            Debug.LogError("RhythmManager: maliciousBeatPrefab is not assigned.");
             enabled = false;
             return;
         }
@@ -100,8 +122,10 @@ public class RhythmManager : MonoBehaviour
 
         startTime = Time.time;
         activeBeatData.Clear();
+        activeBeatObjects.Clear();
         StartCoroutine(ProcessBeats());
         StartCoroutine(MonitorInputs());
+        StartCoroutine(UpdateBeatPositions());
     }
 
     private IEnumerator ProcessBeats()
@@ -112,110 +136,148 @@ public class RhythmManager : MonoBehaviour
             float elapsed = Time.time - startTime;
             float timeUntilBeat = targetBeat - elapsed;
 
-            // get an object from the pool
-            GameObject obj = GetPooledObject();
-
-            if (obj == null)
+            // Spawn beat when it's close enough to appear on screen (moveStartThreshold + some buffer)
+            if (timeUntilBeat <= moveStartThreshold + 0.5f)
             {
-                Debug.LogWarning("RhythmManager: failed to get pooled object.");
+                // get an object from the pool
+                GameObject obj = GetPooledObject(false);
+
+                if (obj == null)
+                {
+                    Debug.LogWarning("RhythmManager: failed to get pooled object.");
+                    beatIndex++;
+                    yield return null;
+                    continue;
+                }
+
+                int currentBeatIndex = beatIndex;
+                obj.transform.position = poolStartPosition.position;
+                activeBeatData[currentBeatIndex] = (targetBeat, false, false);
+                activeBeatObjects[currentBeatIndex] = obj;
+
+                // Randomly spawn a malicious beat after this beat
+                if (Random.value < maliciousBeatChance && beatIndex + 1 < config.beats.Count)
+                {
+                    float nextBeat = config.beats[beatIndex + 1];
+                    float maliciousBeatTime = (targetBeat + nextBeat) / 2f;
+
+                    GameObject maliciousObj = GetPooledObject(true);
+                    if (maliciousObj != null)
+                    {
+                        maliciousObj.transform.position = poolStartPosition.position;
+                        int maliciousBeatIndex = beatIndex + 10000;
+                        activeBeatData[maliciousBeatIndex] = (maliciousBeatTime, false, true);
+                        activeBeatObjects[maliciousBeatIndex] = maliciousObj;
+                    }
+                }
+
                 beatIndex++;
-                yield return null;
-                continue;
             }
 
-            int currentBeatIndex = beatIndex;
-            activeBeatData[currentBeatIndex] = (targetBeat, false);
-
-            // start coroutine to move it so that it arrives exactly at targetBeat
-            StartCoroutine(MoveToMainAndReturn(obj, Mathf.Max(0f, timeUntilBeat), currentBeatIndex));
-
-            beatIndex++;
             yield return null;
         }
     }
 
-    private IEnumerator MoveToMainAndReturn(GameObject obj, float timeToArrive, int beatIndex)
+    private IEnumerator UpdateBeatPositions()
     {
-        Vector3 startPos = poolStartPosition.position;
-        Vector3 mainPos = mainPoint.transform.position;
-        Vector3 endPos = poolEndPosition.position;
+        while (true)
+        {
+            float currentTime = Time.time - startTime;
+            Vector3 startPos = poolStartPosition.position;
+            Vector3 mainPos = mainPoint.transform.position;
+            Vector3 endPos = poolEndPosition.position;
 
-        // Move from pool start to main point
-        if (timeToArrive <= 0f)
-        {
-            obj.transform.position = mainPos;
-        }
-        else
-        {
-            float t = 0f;
-            while (t < timeToArrive)
+            List<int> beatsToRemove = new List<int>();
+
+            foreach (var kvp in activeBeatObjects)
             {
-                if (obj == null) yield break;
-                t += Time.deltaTime;
-                float frac = Mathf.Clamp01(t / timeToArrive);
-                obj.transform.position = Vector3.Lerp(startPos, mainPos, frac);
-                yield return null;
+                int beatIdx = kvp.Key;
+                GameObject obj = kvp.Value;
+
+                if (obj == null || !activeBeatData.ContainsKey(beatIdx))
+                {
+                    beatsToRemove.Add(beatIdx);
+                    continue;
+                }
+
+                float beatTime = activeBeatData[beatIdx].beatTime;
+                float timeRemaining = beatTime - currentTime;
+
+                // Phase 1: Stay at start if more than moveStartThreshold away
+                if (timeRemaining > moveStartThreshold)
+                {
+                    obj.transform.position = startPos;
+                }
+                // Phase 2: Move from start to main point (smooth continuous movement)
+                else if (timeRemaining > 0)
+                {
+                    float moveProgress = 1f - (timeRemaining / moveStartThreshold);
+                    obj.transform.position = Vector3.Lerp(startPos, mainPos, moveProgress);
+                }
+                // Phase 3: Hold at main point
+                else if (timeRemaining > -holdTime)
+                {
+                    obj.transform.position = mainPos;
+                }
+                // Phase 4: Move from main to end (smooth continuous movement)
+                else if (timeRemaining > -holdTime - moveToEndDuration)
+                {
+                    float timeIntoExit = -holdTime - timeRemaining;
+                    float moveProgress = timeIntoExit / moveToEndDuration;
+                    obj.transform.position = Vector3.Lerp(mainPos, endPos, moveProgress);
+                }
+                // Phase 5: Beat has passed - mark for cleanup
+                else
+                {
+                    var beatData = activeBeatData[beatIdx];
+                    if (!beatData.inputHandled)
+                    {
+                        failureCount++;
+
+                        string beatType = beatData.isMalicious ? "Malicious" : "Regular";
+                        Debug.Log($"Beat {beatIdx} MISS - No input ({beatType})");
+
+                        if (!beatData.isMalicious)
+                            healthSystem.MissedTarget();
+                    }
+
+                    // Return to pool
+                    obj.transform.position = startPos;
+                    obj.SetActive(false);
+
+                    if (beatData.isMalicious)
+                        maliciousPool.Enqueue(obj);
+                    else
+                        availablePool.Enqueue(obj);
+
+                    beatsToRemove.Add(beatIdx);
+                    activeBeatData.Remove(beatIdx);
+                }
             }
-            obj.transform.position = mainPos;
-        }
 
-        // hold briefly on the main point
-        float hold = 0f;
-        while (hold < holdTime)
-        {
-            if (obj == null) yield break;
-            hold += Time.deltaTime;
-            yield return null;
-        }
-
-        // move from main point to end position
-        float mt = 0f;
-        while (mt < moveToEndDuration)
-        {
-            if (obj == null) yield break;
-            mt += Time.deltaTime;
-            float frac = Mathf.Clamp01(mt / moveToEndDuration);
-            obj.transform.position = Vector3.Lerp(mainPos, endPos, frac);
-            yield return null;
-        }
-
-        obj.transform.position = endPos;
-
-        // Deactivate, teleport to start, and return to pool
-        if (obj != null)
-        {
-            obj.transform.position = startPos;
-            obj.SetActive(false);
-            availablePool.Enqueue(obj);
-        }
-
-        // Clean up beat data
-        if (activeBeatData.ContainsKey(beatIndex))
-        {
-            var beatData = activeBeatData[beatIndex];
-            if (!beatData.inputHandled)
+            // Clean up removed beats
+            foreach (int beatIdx in beatsToRemove)
             {
-                failureCount++;
-
-                Debug.Log($"Beat {beatIndex} MISS - No input");
-
-                healthSystem.MissedTarget();
+                activeBeatObjects.Remove(beatIdx);
             }
-            activeBeatData.Remove(beatIndex);
+
+            yield return null;
         }
     }
 
-    private GameObject GetPooledObject()
+    private GameObject GetPooledObject(bool isMalicious)
     {
         GameObject obj = null;
+        Queue<GameObject> pool = isMalicious ? maliciousPool : availablePool;
+        GameObject prefab = isMalicious ? maliciousBeatPrefab : beatPointPrefab;
 
-        if (availablePool.Count > 0)
+        if (pool.Count > 0)
         {
-            obj = availablePool.Dequeue();
+            obj = pool.Dequeue();
         }
         else
         {
-            obj = Instantiate(beatPointPrefab, poolStartPosition.position, Quaternion.identity);
+            obj = Instantiate(prefab, poolStartPosition.position, Quaternion.identity);
         }
 
         if (obj != null)
@@ -280,17 +342,30 @@ public class RhythmManager : MonoBehaviour
 
         if (closestBeatIndex >= 0)
         {
-            // Valid input within tolerance and early
-            successCount++;
             var beatData = activeBeatData[closestBeatIndex];
-            activeBeatData[closestBeatIndex] = (beatData.beatTime, true);
+            bool isMalicious = beatData.isMalicious;
 
-            float beatTime = beatData.beatTime;
-            float errorPercentage = (closestDistance / beatTime) * 100f;
+            // Check if player hit a malicious beat
+            if (isMalicious)
+            {
+                failureCount++;
+                activeBeatData[closestBeatIndex] = (beatData.beatTime, true, true);
+                Debug.Log($"Beat {closestBeatIndex} MISS - Hit malicious beat!");
+                healthSystem.MissedTarget();
+            }
+            else
+            {
+                // Valid input on regular beat
+                successCount++;
+                activeBeatData[closestBeatIndex] = (beatData.beatTime, true, false);
 
-            BeatFeedback feedback = GetFeedback(errorPercentage, true);
+                float beatTime = beatData.beatTime;
+                float errorPercentage = (closestDistance / beatTime) * 100f;
 
-            Debug.Log($"Beat {closestBeatIndex} SUCCESS - {feedback} - Input detected with {closestDistance:F3}s error ({errorPercentage:F2}%). Success: {successCount}, Failed: {failureCount}");
+                BeatFeedback feedback = GetFeedback(errorPercentage, true);
+
+                Debug.Log($"Beat {closestBeatIndex} SUCCESS - {feedback} - Input detected with {closestDistance:F3}s error ({errorPercentage:F2}%). Success: {successCount}, Failed: {failureCount}");
+            }
         }
         else
         {
@@ -321,14 +396,15 @@ public class RhythmManager : MonoBehaviour
                 failureCount++;
 
                 var beatData = activeBeatData[closestMissBeatIndex];
-                activeBeatData[closestMissBeatIndex] = (beatData.beatTime, true);
+                activeBeatData[closestMissBeatIndex] = (beatData.beatTime, true, beatData.isMalicious);
 
                 bool isLate = inputTime >= beatData.beatTime;
                 string missReason = isLate ? "Late press" : "Input too far from beat";
 
                 Debug.Log($"Beat {closestMissBeatIndex} MISS - {missReason}");
 
-                healthSystem.MissedTarget();
+                if (!beatData.isMalicious)
+                    healthSystem.MissedTarget();
             }
         }
     }
