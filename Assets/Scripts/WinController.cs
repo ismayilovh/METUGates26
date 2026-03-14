@@ -16,11 +16,15 @@ public class WinController : MonoBehaviour
 
     int score;
     int highscore;
+
     public Animator cashierAnimator;
     public AnimationClip cashierAnimation;
+
     void Start()
     {
         panel.localScale = Vector3.zero;
+        titleText.transform.localScale = Vector3.zero;
+
         retryButton.localScale = Vector3.zero;
         menuButton.localScale = Vector3.zero;
     }
@@ -41,9 +45,11 @@ public class WinController : MonoBehaviour
 
         Sequence seq = DOTween.Sequence();
 
-        seq.Append(panel.DOScale(1, 0.4f).SetEase(Ease.OutBack));
+        // PANEL
+        seq.Append(panel.DOScale(1f, 0.4f).SetEase(Ease.OutBack));
 
-        seq.Append(titleText.transform.DOScale(1.2f, 0.25f).From(0));
+        // TITLE
+        seq.Append(titleText.transform.DOScale(1.2f, 0.25f).SetEase(Ease.OutBack));
 
         // SCORE SAYMA
         seq.AppendCallback(() =>
@@ -59,9 +65,10 @@ public class WinController : MonoBehaviour
             }, score, 0.6f);
         });
 
-        // HIGHSCORE SAYMA (score bittikten sonra)
+        // SCORE SAYMA BEKLE
         seq.AppendInterval(0.6f);
 
+        // HIGHSCORE SAYMA
         seq.AppendCallback(() =>
         {
             HighscoreText.text = "Highscore: 0";
@@ -75,8 +82,11 @@ public class WinController : MonoBehaviour
             }, highscore, 0.6f);
         });
 
-        seq.Append(retryButton.DOScale(1, 0.25f).From(0).SetEase(Ease.OutBack));
-        seq.Join(menuButton.DOScale(1, 0.25f).From(0).SetEase(Ease.OutBack));
+        seq.AppendInterval(0.6f);
+
+        // BUTTON ANIMATION
+        seq.Append(retryButton.DOScale(1f, 0.3f).SetEase(Ease.OutBack));
+        seq.Join(menuButton.DOScale(1f, 0.3f).SetEase(Ease.OutBack));
     }
 
     public void Retry()

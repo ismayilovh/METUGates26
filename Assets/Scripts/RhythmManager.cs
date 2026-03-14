@@ -66,7 +66,9 @@ public class RhythmManager : MonoBehaviour
 
     void Start()
     {
+        winController.gameObject.SetActive(false); 
         isWinChecked = false;
+        ObjectsMove.objectCount = config.beats.Count;
         pressAction = inputActions.FindAction("Press");
         pressAction.Enable();
 
@@ -92,7 +94,7 @@ public class RhythmManager : MonoBehaviour
         while (beatIndex < config.beats.Count)
         {
             float beatTime = config.beats[beatIndex] + beatOffset;
-            float elapsed = AudioManager.Instance.GetTime();
+            float elapsed = Time.time - startTime;
             float remaining = beatTime - elapsed;
 
             if (remaining <= moveStartTime + 0.5f)
@@ -303,7 +305,8 @@ public class RhythmManager : MonoBehaviour
             HealthSystem.health > 0)
         {
             isWinChecked = true;
-            winController.ShowWin(successCount);
+            winController.gameObject.SetActive(true);
+            winController.ShowWin(PerfectVFX.score);
         }
     }
 

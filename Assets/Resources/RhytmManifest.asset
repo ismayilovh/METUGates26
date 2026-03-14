@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 546f75897a444d04dbb4338ac517e49b, type: 3}
+  m_Name: RhytmManifest
+  m_EditorClassIdentifier: Assembly-CSharp::RhythmConfig
+  beats:
+  - 0.8219178
+  - 1.2328767
+  - 1.643836
+  - 2.0547945
+  - 3.287671
+  - 4.109589
+  - 4.9315066
+  - 5.7534246
+  - 6.575342
+  - 7.39726
+  - 8.219178
+  - 9.041096
+  - 9.863013
+  - 10.684932
+  - 11.506849
+  - 12.328767
+  - 13.150684
+  - 13.972603
+  - 14.79452
+  - 14.89726
+  - 14.999999
+  - 15.102739
+  - 15.20548
+  - 15.616439
+  - 16.0274
+  - 16.438358
+  - 16.84932
+  - 17.260279
+  - 17.67124
+  - 18.0822
+  - 18.493158
+  - 18.90412
+  - 19.315079
+  - 19.726038

@@ -14343,7 +14343,7 @@ MonoBehaviour:
   maliciousBeatPrefab: {fileID: 6634489746980102651, guid: 87995b7c778a75b449fbd35854b924bb, type: 3}
   poolStart: {fileID: 385035638}
   poolEnd: {fileID: 1516441565}
-  config: {fileID: 11400000, guid: 0d0f6d55afb0d624897b7e384c2d624b, type: 2}
+  config: {fileID: 11400000, guid: b024329e921ffe541a526f27128ab10a, type: 2}
   inputActions: {fileID: -944628639613478452, guid: 08fa6bfeb034c8c4d801717440c8ec81, type: 3}
   objectsMove: {fileID: 1795754503}
   healthSystem: {fileID: 617256197}
@@ -14352,12 +14352,12 @@ MonoBehaviour:
   moveStartTime: 2
   holdTime: 0.05
   exitDuration: 0.4
-  beatOffset: 0.8
+  beatOffset: 2
   inputTolerancePercent: 20
   perfectThreshold: 2.5
   greatThreshold: 5
   goodThreshold: 10
-  maliciousChance: 0.1
+  maliciousChance: 0
 --- !u!4 &1728255002
 Transform:
   m_ObjectHideFlags: 0
@@ -14538,7 +14538,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: b37caa0440d85794b99951e40d7c615b, type: 3}
+  m_Resource: {fileID: 8300000, guid: ec1ee0820044ae747aa755ef13a9219b, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

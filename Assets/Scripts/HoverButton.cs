@@ -12,10 +12,17 @@ public class HoverButton : MonoBehaviour,
     Vector3 originalScale;
     Tween pulseTween;
 
-    void Start()
+    void Awake()
     {
         originalScale = transform.localScale;
 
+        // Eðer baþka script scale'i 0 yaptýysa güvenlik
+        if (originalScale == Vector3.zero)
+            originalScale = Vector3.one;
+    }
+
+    void Start()
+    {
         if (isPlayButton)
         {
             StartPulse();
@@ -42,7 +49,6 @@ public class HoverButton : MonoBehaviour,
     public void OnPointerExit(PointerEventData eventData)
     {
         transform.DOKill();
-        transform.localScale = originalScale;
 
         if (isPlayButton)
         {
@@ -58,7 +64,6 @@ public class HoverButton : MonoBehaviour,
     public void OnPointerClick(PointerEventData eventData)
     {
         transform.DOKill();
-        transform.localScale = originalScale;
 
         if (isPlayButton)
         {
