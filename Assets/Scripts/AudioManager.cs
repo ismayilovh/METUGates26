@@ -1,10 +1,13 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
 
-    [SerializeField] private AudioSource musicSource;
+    private const double scheduleBuffer = 1.0;
+    [SerializeField] private AudioSource audioSource;
+    private double dspStartTime;
 
     private void Awake()
     {
@@ -18,10 +21,20 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+
     public void StartRhythm()
     {
-        musicSource.Play();
+        dspStartTime = AudioSettings.dspTime + scheduleBuffer;
+        audioSource.PlayScheduled(dspStartTime);
     }
 
-    public float GetTime() => musicSource.time;
+    public float GetTime()
+    {
+        return (float)(AudioSettings.dspTime - dspStartTime);
+    }
+
+    public double GetDSPStartTime()
+    {
+        return (float)dspStartTime;
+    }
 }

@@ -51,8 +51,6 @@ public class RhythmManager : MonoBehaviour
 
     InputAction pressAction;
 
-    float startTime;
-
     int beatIndex;
 
     int successCount;
@@ -79,8 +77,10 @@ public class RhythmManager : MonoBehaviour
     {
         yield return new WaitForSeconds(3f);
 
-        startTime = Time.time;
         AudioManager.Instance.StartRhythm();
+
+        // Wait until the scheduled DSP start time before spawning beats
+        yield return new WaitUntil(() => AudioSettings.dspTime >= AudioManager.Instance.GetDSPStartTime());
 
         StartCoroutine(SpawnBeats());
         StartCoroutine(UpdateBeats());
@@ -133,7 +133,7 @@ public class RhythmManager : MonoBehaviour
     {
         while (true)
         {
-            float time = Time.time - startTime;
+            float time = AudioManager.Instance.GetTime();
 
             List<int> removeList = new List<int>();
 
@@ -197,7 +197,7 @@ public class RhythmManager : MonoBehaviour
         {
             if (pressAction.WasPressedThisFrame())
             {
-                float time = Time.time - startTime;
+                float time = AudioManager.Instance.GetTime();
 
                 HandleInput(time);
             }
@@ -264,7 +264,7 @@ public class RhythmManager : MonoBehaviour
                 activeBeats[nearestUpcoming].handled = true;
 
             failureCount++;
-            GetFeedback(float.MaxValue); // ✅ Only GetFeedback takes the heart now
+            GetFeedback(float.MaxValue);
             Debug.Log("Miss — pressed too early");
         }
     }
