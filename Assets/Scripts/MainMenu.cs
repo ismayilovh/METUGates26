@@ -1,9 +1,9 @@
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEngine.Rendering.DebugUI;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class MainMenu : MonoBehaviour
 {
@@ -12,28 +12,15 @@ public class MainMenu : MonoBehaviour
     public GameObject settingsUI;
     public GameObject playButton;
 
-    public float scaleAmount = 1.15f;
-    public float duration = 0.5f;
     public Slider volumeSlider;
-
+    public Slider sfxVolumeSlider;
 
     void Start()
     {
+        PlayerPrefs.SetFloat("SFXVolume", 1f);
+
         volumeSlider.onValueChanged.AddListener(SetVolume);
-
-        playButton.transform.localScale = Vector3.one * 0.3f;
-
-        Sequence seq = DOTween.Sequence();
-
-        seq.Append(playButton.transform.DOScale(0.25f, 0.07f).SetEase(Ease.InQuad));     // anticipation
-        seq.Append(playButton.transform.DOScale(1.45f, 0.12f).SetEase(Ease.OutQuad));    // pop
-        seq.Append(playButton.transform.DOScale(1.2f, 0.12f).SetEase(Ease.InOutSine));   // bounce
-        seq.Append(playButton.transform.DOScale(1.3f, 0.18f).SetEase(Ease.OutBack));     // smooth settle
-
-        seq.AppendInterval(0.4f);
-
-        seq.SetLoops(-1);
-
+        sfxVolumeSlider.onValueChanged.AddListener(SetSFXVolume);
     }
 
     void SetVolume(float value)
@@ -41,9 +28,14 @@ public class MainMenu : MonoBehaviour
         AudioListener.volume = value;
     }
 
+    void SetSFXVolume(float value)
+    {
+        PlayerPrefs.SetFloat("SFXVolume", value);
+    }
+
     public void PlayGame()
     {
-        SceneManager.LoadScene("Game");
+        SceneManager.LoadScene("EmreScene");
     }
 
     public void Settings()
@@ -51,6 +43,7 @@ public class MainMenu : MonoBehaviour
         settingsUI.SetActive(true);
         settingsUI.transform.localScale = Vector3.zero;
         settingsUI.transform.DOScale(1, 0.3f).SetEase(Ease.OutBack);
+
         mainMenuUI.SetActive(false);
     }
 
@@ -69,9 +62,9 @@ public class MainMenu : MonoBehaviour
         mainMenuUI.SetActive(true);
     }
 
-
     public void QuitGame()
     {
         Application.Quit();
     }
+
 }

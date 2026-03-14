@@ -8,7 +8,6 @@ public enum BeatFeedback
     Perfect,
     Great,
     Good,
-    Early,
     Miss
 }
 
@@ -341,7 +340,6 @@ public class RhythmManager : MonoBehaviour
         // Late presses are always miss
         if (!isEarly)
         {
-            Debug.Log("MISS - Late press");
             healthSystem.MissedTarget();
             return BeatFeedback.Miss;
         }
@@ -353,18 +351,15 @@ public class RhythmManager : MonoBehaviour
         }
         else if (errorPercentage <= greatThreshold)
         {
+            perfectVfx.PlayGreat();
             return BeatFeedback.Great;
         }
         else if (errorPercentage <= goodThreshold)
         {
+            perfectVfx.PlayGood();
             return BeatFeedback.Good;
         }
-        else if (errorPercentage <= inputTolerancePercent)
-        {
-            return BeatFeedback.Early;
-        }
 
-        Debug.Log("MISS - Too inaccurate");
         healthSystem.MissedTarget();
         return BeatFeedback.Miss;
     }

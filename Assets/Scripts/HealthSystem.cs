@@ -15,6 +15,7 @@ public class HealthSystem : MonoBehaviour
         health = maxHealth;
     }
 
+    public GameOverManager gameOverManager;
     public void MissedTarget()
     {
         health--;
@@ -29,7 +30,7 @@ public class HealthSystem : MonoBehaviour
 
         if (health <= 0)
         {
-            Debug.Log("Lost");
+            gameOverManager.TriggerGameOver(1000);
         }
     }
 }

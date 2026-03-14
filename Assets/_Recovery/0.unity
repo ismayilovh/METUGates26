@@ -131,7 +131,6 @@ GameObject:
   - component: {fileID: 79994598}
   - component: {fileID: 79994597}
   - component: {fileID: 79994596}
-  - component: {fileID: 79994599}
   m_Layer: 5
   m_Name: Play
   m_TagString: Untagged
@@ -253,19 +252,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 79994594}
   m_CullTransparentMesh: 1
---- !u!114 &79994599
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 79994594}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef254641990b0e548a6f3fe4359116da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HoverButton
-  isPlayButton: 1
 --- !u!1 &196467579
 GameObject:
   m_ObjectHideFlags: 0
@@ -278,7 +264,6 @@ GameObject:
   - component: {fileID: 196467583}
   - component: {fileID: 196467582}
   - component: {fileID: 196467581}
-  - component: {fileID: 196467584}
   m_Layer: 5
   m_Name: Settings
   m_TagString: Untagged
@@ -400,19 +385,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 196467579}
   m_CullTransparentMesh: 1
---- !u!114 &196467584
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 196467579}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef254641990b0e548a6f3fe4359116da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HoverButton
-  isPlayButton: 0
 --- !u!1 &364878416
 GameObject:
   m_ObjectHideFlags: 0
@@ -536,6 +508,8 @@ MonoBehaviour:
   mainMenuUI: {fileID: 1431414040}
   settingsUI: {fileID: 2118466428}
   playButton: {fileID: 79994594}
+  scaleAmount: 1.15
+  duration: 0.5
   volumeSlider: {fileID: 956710134}
   sfxVolumeSlider: {fileID: 1984950023}
 --- !u!1 &384858586
@@ -550,7 +524,6 @@ GameObject:
   - component: {fileID: 384858590}
   - component: {fileID: 384858589}
   - component: {fileID: 384858588}
-  - component: {fileID: 384858591}
   m_Layer: 5
   m_Name: Back
   m_TagString: Untagged
@@ -672,19 +645,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 384858586}
   m_CullTransparentMesh: 1
---- !u!114 &384858591
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 384858586}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef254641990b0e548a6f3fe4359116da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HoverButton
-  isPlayButton: 0
 --- !u!1 &507304561
 GameObject:
   m_ObjectHideFlags: 0
@@ -1159,7 +1119,6 @@ GameObject:
   m_Component:
   - component: {fileID: 956710133}
   - component: {fileID: 956710134}
-  - component: {fileID: 956710135}
   m_Layer: 5
   m_Name: MusicSlider
   m_TagString: Untagged
@@ -1241,18 +1200,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &956710135
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 956710132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bc16093bb91dd44a83a9d5f1bf8538d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SliderHover
 --- !u!1 &1071123937
 GameObject:
   m_ObjectHideFlags: 0
@@ -1539,7 +1486,6 @@ GameObject:
   - component: {fileID: 1150871471}
   - component: {fileID: 1150871470}
   - component: {fileID: 1150871469}
-  - component: {fileID: 1150871472}
   m_Layer: 5
   m_Name: Quit
   m_TagString: Untagged
@@ -1661,19 +1607,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1150871467}
   m_CullTransparentMesh: 1
---- !u!114 &1150871472
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1150871467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef254641990b0e548a6f3fe4359116da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HoverButton
-  isPlayButton: 0
 --- !u!1 &1176102214
 GameObject:
   m_ObjectHideFlags: 0
@@ -2534,7 +2467,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1984950022}
   - component: {fileID: 1984950023}
-  - component: {fileID: 1984950024}
   m_Layer: 5
   m_Name: SFXSlider
   m_TagString: Untagged
@@ -2616,18 +2548,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &1984950024
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1984950021}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bc16093bb91dd44a83a9d5f1bf8538d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SliderHover
 --- !u!1 &1991777811
 GameObject:
   m_ObjectHideFlags: 0

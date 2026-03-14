@@ -12,10 +12,6 @@ public class MissVFX : MonoBehaviour
     public Transform ring;
     public float spotScaleAmount = 1.1f;
     public Image loseBG;
-    void Update()
-    {
-        
-    }
 
     public void PlayMiss()
     {

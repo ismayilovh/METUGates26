@@ -1,46 +1,68 @@
 using UnityEngine;
 using DG.Tweening;
-using UnityEngine.InputSystem;
 
 public class PerfectVFX : MonoBehaviour
 {
     public Transform ring;
     public ParticleSystem particles;
+
     public Transform perfectText;
     public Transform perfectImage;
 
+    public Transform greatText;
+    public Transform greatImage;
+
+    public Transform goodText;
+    public Transform goodImage;
+
+    public Transform earlyText;
+    public Transform earlyImage;
+
     public float spotScaleAmount = 1.1f;
 
-    public void PlayPerfect()
+    void PlayEffect(Transform text, Transform image, float multiplier, float duration, bool playParticles)
     {
         // Ring
         ring.DOKill();
-        //ring.localScale = Vector3.zero * 0.8f;
 
         Sequence ringSeq = DOTween.Sequence();
-        ringSeq.Append(ring.DOScale(spotScaleAmount, 0.12f).SetEase(Ease.OutBack));
-        ringSeq.Append(ring.DOScale(1f, 0.08f).SetEase(Ease.InBack));
+        ringSeq.Append(ring.DOScale(spotScaleAmount * multiplier, duration).SetEase(Ease.OutBack));
+        ringSeq.Append(ring.DOScale(1f, duration * 0.7f).SetEase(Ease.InBack));
 
-        // Perfect Text
-        perfectText.DOKill();
-        perfectText.localScale = Vector3.zero;
+        // Text
+        text.DOKill();
+        text.localScale = Vector3.zero;
 
         Sequence textSeq = DOTween.Sequence();
-        textSeq.Append(perfectText.DOScale(1.3f, 0.2f).SetEase(Ease.OutBack));
-        textSeq.Append(perfectText.DOScale(0f, 0.15f).SetEase(Ease.InBack));
+        textSeq.Append(text.DOScale(1.3f * multiplier, duration).SetEase(Ease.OutBack));
+        textSeq.Append(text.DOScale(0f, duration * 0.8f).SetEase(Ease.InBack));
 
-        // Perfect Image
-        perfectImage.DOKill();
-        perfectImage.localScale = Vector3.zero;
+        // Image
+        image.DOKill();
+        image.localScale = Vector3.zero;
 
         Sequence imageSeq = DOTween.Sequence();
-        imageSeq.Append(perfectImage.DOScale(1.1f, 0.18f).SetEase(Ease.OutBack));
-        imageSeq.Append(perfectImage.DOScale(0f, 0.15f).SetEase(Ease.InBack));
+        imageSeq.Append(image.DOScale(1.1f * multiplier, duration).SetEase(Ease.OutBack));
+        imageSeq.Append(image.DOScale(0f, duration * 0.8f).SetEase(Ease.InBack));
 
-        // Particles
-        particles.Play();
+        if (playParticles)
+            particles.Play();
 
-        // Camera shake
-        Camera.main.transform.DOShakePosition(0.1f, 0.15f);
+        Camera.main.transform.DOShakePosition(0.1f * multiplier, 0.12f);
+    }
+
+    public void PlayPerfect()
+    {
+        PlayEffect(perfectText, perfectImage, 1f, 0.20f, true);
+    }
+
+    public void PlayGreat()
+    {
+        PlayEffect(greatText, greatImage, 0.85f, 0.18f, false);
+    }
+
+    public void PlayGood()
+    {
+        PlayEffect(goodText, goodImage, 0.7f, 0.16f, false);
     }
 }
