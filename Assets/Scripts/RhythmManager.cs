@@ -94,7 +94,7 @@ public class RhythmManager : MonoBehaviour
         while (beatIndex < config.beats.Count)
         {
             float beatTime = config.beats[beatIndex] + beatOffset;
-            float elapsed = Time.time - startTime;
+            float elapsed = AudioManager.Instance.GetTime();
             float remaining = beatTime - elapsed;
 
             if (remaining <= moveStartTime + 0.5f)
