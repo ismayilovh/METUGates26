@@ -35,7 +35,7 @@ public class MainMenu : MonoBehaviour
 
     public void PlayGame()
     {
-        SceneManager.LoadScene("EmreScene");
+        SceneManager.LoadScene("StoryScene");
     }
 
     public void Settings()

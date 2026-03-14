@@ -15,6 +15,7 @@ public class MissVFX : MonoBehaviour
 
     public void PlayMiss()
     {
+        PerfectVFX.score -= 20;
         // Ring
         ring.DOKill();
         //ring.localScale = Vector3.zero;

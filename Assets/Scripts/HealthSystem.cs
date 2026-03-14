@@ -4,7 +4,8 @@ using UnityEngine.InputSystem;
 public class HealthSystem : MonoBehaviour
 {
     public int maxHealth = 3;
-    int health;
+    public static int health;
+    public static bool isGameOver = false;
 
     public GameObject[] healthImages;
 
@@ -12,6 +13,7 @@ public class HealthSystem : MonoBehaviour
 
     private void Start()
     {
+        isGameOver = false;
         health = maxHealth;
     }
 
@@ -28,9 +30,14 @@ public class HealthSystem : MonoBehaviour
             healthImages[health].SetActive(false);
         }
 
-        if (health <= 0)
+        if (health <= 0 && isGameOver == false)
         {
-            gameOverManager.TriggerGameOver(1000);
+            isGameOver = true;
+            if (PerfectVFX.score > PlayerPrefs.GetInt("MaxScore"))
+            {
+                PlayerPrefs.SetInt("MaxScore", PerfectVFX.score);
+            }
+            gameOverManager.TriggerGameOver(PerfectVFX.score);
         }
     }
 }

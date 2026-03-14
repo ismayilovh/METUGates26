@@ -19,6 +19,11 @@ public class PerfectVFX : MonoBehaviour
     public Transform earlyImage;
 
     public float spotScaleAmount = 1.1f;
+    public static int score = 0;
+    private void Start()
+    {
+        score = 0;
+    }
 
     void PlayEffect(Transform text, Transform image, float multiplier, float duration, bool playParticles)
     {
@@ -53,16 +58,19 @@ public class PerfectVFX : MonoBehaviour
 
     public void PlayPerfect()
     {
+        score += 100;
         PlayEffect(perfectText, perfectImage, 1f, 0.20f, true);
     }
 
     public void PlayGreat()
     {
+        score += 60;
         PlayEffect(greatText, greatImage, 0.85f, 0.18f, false);
     }
 
     public void PlayGood()
     {
+        score += 30;
         PlayEffect(goodText, goodImage, 0.7f, 0.16f, false);
     }
 }
