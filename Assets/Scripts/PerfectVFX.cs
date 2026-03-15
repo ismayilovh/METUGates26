@@ -36,8 +36,9 @@ public class PerfectVFX : MonoBehaviour
         ring.DOKill();
 
         Sequence ringSeq = DOTween.Sequence();
+        float ringStartScale = ring.transform.localScale.x;
         ringSeq.Append(ring.DOScale(spotScaleAmount * multiplier, duration).SetEase(Ease.OutBack));
-        ringSeq.Append(ring.DOScale(1f, duration * 0.7f).SetEase(Ease.InBack));
+        ringSeq.Append(ring.DOScale(ringStartScale, duration * 0.7f).SetEase(Ease.InBack));
 
         // Text
         text.DOKill();
