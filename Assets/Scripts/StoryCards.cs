@@ -61,7 +61,7 @@ public class StoryCards : MonoBehaviour
 
         if (currentStep >= steps.Length)
         {
-            SceneManager.LoadScene("EmreScene2");
+            SceneManager.LoadScene("EmreScene");
             return;
         }
         source.PlayOneShot(clip);

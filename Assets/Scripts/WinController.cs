@@ -116,6 +116,6 @@ public class WinController : MonoBehaviour
 
     public void ManifestScene()
     {
-        SceneManager.LoadScene("ManifestScene3");
+        SceneManager.LoadScene("ManifestScene");
     }
 }
