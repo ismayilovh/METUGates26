@@ -26,6 +26,8 @@ public class RhythmManager : MonoBehaviour
 
     public GameObject flyPrefab;
 
+    public Sprite missSprite;
+
     public RhythmConfig config;
     public InputActionAsset inputActions;
 
@@ -73,6 +75,7 @@ public class RhythmManager : MonoBehaviour
         public GameObject obj;
         public bool escapingToMiss;
         public GameObject flyObj;
+        public Sprite originalSprite;
     }
 
     void Start()
@@ -139,6 +142,13 @@ public class RhythmManager : MonoBehaviour
         data.malicious = malicious;
         data.obj = obj;
         data.escapingToMiss = false;
+
+        // Store original sprite
+        SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            data.originalSprite = spriteRenderer.sprite;
+        }
 
         // Spawn fly object for malicious beats — it will chase the beat and trigger escape on arrival
         if (malicious)
@@ -233,6 +243,16 @@ public class RhythmManager : MonoBehaviour
                     {
                         failureCount++;
                         healthSystem.MissedTarget();
+
+                        // Replace sprite with missSprite
+                        if (missSprite != null)
+                        {
+                            SpriteRenderer spriteRenderer = data.obj.GetComponent<SpriteRenderer>();
+                            if (spriteRenderer != null)
+                            {
+                                spriteRenderer.sprite = missSprite;
+                            }
+                        }
                     }
 
                     ReturnObject(data.obj, data.malicious);
@@ -327,6 +347,15 @@ public class RhythmManager : MonoBehaviour
             failureCount++;
             GetFeedback(float.MaxValue);
             Debug.Log("Miss — pressed too early");
+
+            if (missSprite != null)
+            {
+                SpriteRenderer spriteRenderer = activeBeats[nearestUpcoming].obj.GetComponent<SpriteRenderer>();
+                if (spriteRenderer != null)
+                {
+                    spriteRenderer.sprite = missSprite;
+                }
+            }
         }
     }
 
@@ -409,7 +438,16 @@ public class RhythmManager : MonoBehaviour
         if (malicious)
             maliciousPool.Enqueue(obj);
         else
+        {
+            // Restore original sprite for reuse
+            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null && beatPrefab.GetComponent<SpriteRenderer>() != null)
+            {
+                spriteRenderer.sprite = beatPrefab.GetComponent<SpriteRenderer>().sprite;
+            }
+
             beatPool.Enqueue(obj);
+        }
     }
 
     void OnDisable()
