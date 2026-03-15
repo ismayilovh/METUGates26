@@ -2,6 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class WinController : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class WinController : MonoBehaviour
 
     public Transform retryButton;
     public Transform menuButton;
+    public Transform manifestButton; // yeni button
 
     public TMP_Text scoreText;
     public TMP_Text HighscoreText;
@@ -18,7 +20,8 @@ public class WinController : MonoBehaviour
     int highscore;
 
     public Animator cashierAnimator;
-    public AnimationClip cashierAnimation;
+
+    public float congratsDelay = 1.5f;
 
     void Start()
     {
@@ -27,6 +30,7 @@ public class WinController : MonoBehaviour
 
         retryButton.localScale = Vector3.zero;
         menuButton.localScale = Vector3.zero;
+        manifestButton.localScale = Vector3.zero; // yeni button
     }
 
     public void ShowWin(int finalScore)
@@ -43,15 +47,28 @@ public class WinController : MonoBehaviour
 
         highscore = savedHighscore;
 
+        if (cashierAnimator != null)
+        {
+            cashierAnimator.SetTrigger("Play");
+        }
+
+        StartCoroutine(ShowWinAfterDelay());
+    }
+
+    IEnumerator ShowWinAfterDelay()
+    {
+        yield return new WaitForSeconds(congratsDelay);
+        ShowWinUI();
+    }
+
+    void ShowWinUI()
+    {
         Sequence seq = DOTween.Sequence();
 
-        // PANEL
         seq.Append(panel.DOScale(1f, 0.4f).SetEase(Ease.OutBack));
 
-        // TITLE
         seq.Append(titleText.transform.DOScale(1.2f, 0.25f).SetEase(Ease.OutBack));
 
-        // SCORE SAYMA
         seq.AppendCallback(() =>
         {
             scoreText.text = "Score: 0";
@@ -65,10 +82,8 @@ public class WinController : MonoBehaviour
             }, score, 0.6f);
         });
 
-        // SCORE SAYMA BEKLE
         seq.AppendInterval(0.6f);
 
-        // HIGHSCORE SAYMA
         seq.AppendCallback(() =>
         {
             HighscoreText.text = "Highscore: 0";
@@ -84,9 +99,9 @@ public class WinController : MonoBehaviour
 
         seq.AppendInterval(0.6f);
 
-        // BUTTON ANIMATION
         seq.Append(retryButton.DOScale(1f, 0.3f).SetEase(Ease.OutBack));
         seq.Join(menuButton.DOScale(1f, 0.3f).SetEase(Ease.OutBack));
+        seq.Join(manifestButton.DOScale(1f, 0.3f).SetEase(Ease.OutBack)); // yeni button animasyonu
     }
 
     public void Retry()
@@ -97,5 +112,10 @@ public class WinController : MonoBehaviour
     public void MainMenu()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+
+    public void ManifestScene()
+    {
+        SceneManager.LoadScene("ManifestScene2");
     }
 }

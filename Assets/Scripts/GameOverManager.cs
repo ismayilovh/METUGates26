@@ -54,12 +54,14 @@ public class GameOverManager : MonoBehaviour
 
     public void RetryGame()
     {
+        ButtonClick.PlayButtonSound();
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void ReturnToMenu()
     {
+        ButtonClick.PlayButtonSound();
         Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
     }

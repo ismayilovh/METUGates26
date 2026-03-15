@@ -35,11 +35,13 @@ public class MainMenu : MonoBehaviour
 
     public void PlayGame()
     {
+        ButtonClick.PlayButtonSound();
         SceneManager.LoadScene("StoryScene");
     }
 
     public void Settings()
     {
+        ButtonClick.PlayButtonSound();
         settingsUI.SetActive(true);
         settingsUI.transform.localScale = Vector3.zero;
         settingsUI.transform.DOScale(1, 0.3f).SetEase(Ease.OutBack);
@@ -49,6 +51,7 @@ public class MainMenu : MonoBehaviour
 
     public void BackToMainMenu()
     {
+        ButtonClick.PlayButtonSound();
         StartCoroutine(ClosePanelRoutine());
     }
 
@@ -64,6 +67,7 @@ public class MainMenu : MonoBehaviour
 
     public void QuitGame()
     {
+        ButtonClick.PlayButtonSound();
         Application.Quit();
     }
 

@@ -32,7 +32,7 @@ public class HoverButton : MonoBehaviour,
     void StartPulse()
     {
         pulseTween = transform
-            .DOScale(originalScale * 1.08f, 0.6f)
+            .DOScale(originalScale * 1.02f, 0.6f)
             .SetEase(Ease.InOutSine)
             .SetLoops(-1, LoopType.Yoyo);
     }
@@ -42,7 +42,7 @@ public class HoverButton : MonoBehaviour,
         pulseTween?.Kill();
 
         transform.DOKill();
-        transform.DOScale(originalScale * 1.15f, 0.15f)
+        transform.DOScale(originalScale * 1.05f, 0.15f)
             .SetEase(Ease.OutBack);
     }
 

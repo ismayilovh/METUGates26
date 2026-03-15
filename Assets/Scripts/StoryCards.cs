@@ -45,7 +45,8 @@ public class StoryCards : MonoBehaviour
 
     int currentStep = 0;
     bool animating = false;
-
+    public AudioClip clip;
+    public AudioSource source;
     void Update()
     {
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
@@ -60,10 +61,10 @@ public class StoryCards : MonoBehaviour
 
         if (currentStep >= steps.Length)
         {
-            SceneManager.LoadScene("EmreScene");
+            SceneManager.LoadScene("EmreScene2");
             return;
         }
-
+        source.PlayOneShot(clip);
         CardStep step = steps[currentStep];
         animating = true;
 
