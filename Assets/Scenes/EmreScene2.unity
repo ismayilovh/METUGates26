@@ -1135,9 +1135,9 @@ MonoBehaviour:
   greatThreshold: 5
   goodThreshold: 10
   maliciousChance: 0.1
-  maliciousEscapeDistance: 1
+  maliciousEscapeDistance: 0.8
   maliciousEscapeDuration: 0.3
-  flySpeed: 3
+  flySpeed: 5
 --- !u!1 &241322646
 GameObject:
   m_ObjectHideFlags: 0
