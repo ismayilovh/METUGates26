@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using DG.Tweening;
 
 public enum BeatFeedback
 {
@@ -20,6 +21,10 @@ public class RhythmManager : MonoBehaviour
 
     public Transform poolStart;
     public Transform poolEnd;
+    public Transform missPosition;
+    public Transform flyPosition;
+
+    public GameObject flyPrefab;
 
     public RhythmConfig config;
     public InputActionAsset inputActions;
@@ -43,9 +48,13 @@ public class RhythmManager : MonoBehaviour
 
     [Header("Malicious")]
     public float maliciousChance = 0.1f;
+    public float maliciousEscapeDistance = 1f;
+    public float maliciousEscapeDuration = 0.3f;
+    public float flySpeed = 3f;
 
     Queue<GameObject> beatPool = new Queue<GameObject>();
     Queue<GameObject> maliciousPool = new Queue<GameObject>();
+    Queue<GameObject> flyPool = new Queue<GameObject>();
 
     Dictionary<int, BeatData> activeBeats = new Dictionary<int, BeatData>();
 
@@ -62,11 +71,13 @@ public class RhythmManager : MonoBehaviour
         public bool handled;
         public bool malicious;
         public GameObject obj;
+        public bool escapingToMiss;
+        public GameObject flyObj;
     }
 
     void Start()
     {
-        winController.gameObject.SetActive(false); 
+        winController.gameObject.SetActive(false);
         isWinChecked = false;
         ObjectsMove.objectCount = config.beats.Count;
         pressAction = inputActions.FindAction("Press");
@@ -127,6 +138,15 @@ public class RhythmManager : MonoBehaviour
         data.handled = false;
         data.malicious = malicious;
         data.obj = obj;
+        data.escapingToMiss = false;
+
+        // Spawn fly object for malicious beats — it will chase the beat and trigger escape on arrival
+        if (malicious)
+        {
+            GameObject flyObj = GetFlyObject();
+            flyObj.transform.position = flyPosition.position;
+            data.flyObj = flyObj;
+        }
 
         activeBeats[index] = data;
     }
@@ -149,6 +169,45 @@ public class RhythmManager : MonoBehaviour
                 Vector3 start = poolStart.position;
                 Vector3 main = mainPoint.transform.position;
                 Vector3 end = poolEnd.position;
+
+                if (data.malicious && !data.escapingToMiss)
+                {
+                    // Move fly toward the malicious beat each frame
+                    data.flyObj.transform.position = Vector3.MoveTowards(
+                        data.flyObj.transform.position,
+                        data.obj.transform.position,
+                        flySpeed * Time.deltaTime
+                    );
+
+                    // Escape triggers when beat is close to main point
+                    float distToMain = Vector3.Distance(data.obj.transform.position, main);
+                    if (distToMain <= maliciousEscapeDistance)
+                    {
+                        data.escapingToMiss = true;
+
+                        GameObject escapingObj = data.obj;
+                        GameObject escapingFly = data.flyObj;
+
+                        // Snap fly onto the beat so they visually start from the same spot
+                        escapingFly.transform.position = escapingObj.transform.position;
+
+                        escapingObj.transform.DOKill();
+                        escapingFly.transform.DOKill();
+
+                        escapingObj.transform
+                            .DOMove(missPosition.position, maliciousEscapeDuration)
+                            .SetEase(Ease.InCubic)
+                            .OnComplete(() => ReturnObject(escapingObj, true));
+
+                        escapingFly.transform
+                            .DOMove(missPosition.position, maliciousEscapeDuration)
+                            .SetEase(Ease.InCubic)
+                            .OnComplete(() => ReturnFlyObject(escapingFly));
+
+                        removeList.Add(index);
+                        continue;
+                    }
+                }
 
                 if (remaining > moveStartTime)
                 {
@@ -220,7 +279,7 @@ public class RhythmManager : MonoBehaviour
         {
             BeatData data = kvp.Value;
 
-            if (data.handled) continue;
+            if (data.handled || data.escapingToMiss) continue;
 
             float dist = Mathf.Abs(inputTime - data.beatTime);
             bool early = inputTime < data.beatTime;
@@ -308,6 +367,24 @@ public class RhythmManager : MonoBehaviour
             winController.gameObject.SetActive(true);
             winController.ShowWin(PerfectVFX.score);
         }
+    }
+
+    GameObject GetFlyObject()
+    {
+        if (flyPool.Count > 0)
+        {
+            GameObject obj = flyPool.Dequeue();
+            obj.SetActive(true);
+            return obj;
+        }
+
+        return Instantiate(flyPrefab, flyPosition.position, Quaternion.identity);
+    }
+
+    void ReturnFlyObject(GameObject obj)
+    {
+        obj.SetActive(false);
+        flyPool.Enqueue(obj);
     }
 
     GameObject GetObject(bool malicious)
