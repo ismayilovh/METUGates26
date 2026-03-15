@@ -1123,6 +1123,7 @@ MonoBehaviour:
   missPosition: {fileID: 1509799519}
   flyPosition: {fileID: 1713145537}
   flyPrefab: {fileID: 396470253293086403, guid: 383876d5843cee24098d6dd84275caf0, type: 3}
+  missSprite: {fileID: 21300000, guid: af588c977ba3e7c4cbf3b4628d5d78f3, type: 3}
   config: {fileID: 11400000, guid: 4dd721bf83d023b4a886c4293e306e6c, type: 2}
   inputActions: {fileID: -944628639613478452, guid: 08fa6bfeb034c8c4d801717440c8ec81, type: 3}
   objectsMove: {fileID: 1795754503}
