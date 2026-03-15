@@ -7,10 +7,10 @@ using UnityEngine.EventSystems;
 
 public class MainMenu : MonoBehaviour
 {
-    public Scene gameScene;
     public GameObject mainMenuUI;
     public GameObject settingsUI;
     public GameObject playButton;
+    public GameObject creditsUI;
 
     public Slider volumeSlider;
     public Slider sfxVolumeSlider;
@@ -47,6 +47,7 @@ public class MainMenu : MonoBehaviour
         settingsUI.transform.DOScale(1, 0.3f).SetEase(Ease.OutBack);
 
         mainMenuUI.SetActive(false);
+        creditsUI.SetActive(false);
     }
 
     public void BackToMainMenu()
@@ -63,12 +64,21 @@ public class MainMenu : MonoBehaviour
 
         settingsUI.SetActive(false);
         mainMenuUI.SetActive(true);
+        creditsUI.SetActive(false);
     }
 
-    public void QuitGame()
+    public void BackFromCredits()
     {
-        ButtonClick.PlayButtonSound();
-        Application.Quit();
+        settingsUI.SetActive(false);
+        mainMenuUI.SetActive(true);
+        creditsUI.SetActive(false);
+    }
+
+    public void Credits() 
+    {
+        settingsUI.SetActive(false);
+        mainMenuUI.SetActive(false);
+        creditsUI.SetActive(true);
     }
 
 }
