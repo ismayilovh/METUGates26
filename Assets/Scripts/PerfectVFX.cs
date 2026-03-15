@@ -64,6 +64,7 @@ public class PerfectVFX : MonoBehaviour
 
     public void PlayPerfect()
     {
+        secondVFX.Play();
         score += 100;
         PlayEffect(perfectText, perfectImage, 1f, 0.20f, true);
     }

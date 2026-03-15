@@ -7046,7 +7046,7 @@ ParticleSystemRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -7333,7 +7333,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.15
+      scalar: 0.7
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -11869,7 +11869,7 @@ Transform:
   m_GameObject: {fileID: 560763257}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.28, y: -0.19, z: -0}
+  m_LocalPosition: {x: -1.98, y: 0.37, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12828,7 +12828,7 @@ MonoBehaviour:
   spotScaleAmount: 1.1
   armAnimator: {fileID: 137707351}
   armAnim: {fileID: 7400000, guid: ca297887e4978d8449a120be0a0c8a0f, type: 2}
-  secondVFX: {fileID: 396244690}
+  secondVFX: {fileID: 1202861312}
 --- !u!114 &735397435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13557,7 +13557,7 @@ ParticleSystemRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
